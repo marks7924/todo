@@ -98,6 +98,16 @@ const Store = (() => {
     save();
   }
 
+  function reorderTask(dragId, targetId) {
+    const dragIdx = state.tasks.findIndex(t => t.id === dragId);
+    const targetIdx = state.tasks.findIndex(t => t.id === targetId);
+    if (dragIdx !== -1 && targetIdx !== -1 && dragIdx !== targetIdx) {
+      const [moved] = state.tasks.splice(dragIdx, 1);
+      state.tasks.splice(targetIdx, 0, moved);
+      save();
+    }
+  }
+
   function completeTask(id) {
     const task = getTask(id);
     if (!task) return;
@@ -574,7 +584,7 @@ const Store = (() => {
 
   return {
     load, save, subscribe, getState,
-    getTasks, getTask, addTask, updateTask, deleteTask, completeTask,
+    getTasks, getTask, addTask, updateTask, deleteTask, completeTask, reorderTask,
     getTasksForDate, getInboxTasks, getTasksForProject, getOverdueTasks,
     addSubtask, toggleSubtask, deleteSubtask,
     getProjects, getProject, addProject, updateProject, deleteProject, getProjectProgress,

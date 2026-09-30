@@ -135,6 +135,19 @@
   margin-top: var(--space-6);
 }
 
+.project-date-group,
+.project-unscheduled-wrap {
+  padding: 6px;
+  border-radius: var(--radius-md);
+  transition: outline var(--transition-fast), background var(--transition-fast);
+}
+
+.project-date-group.group-drag-over,
+.project-unscheduled-wrap.group-drag-over {
+  outline: 2px dashed var(--accent);
+  background: var(--surface);
+}
+
 /* Deadline badge */
 .deadline-badge {
   display: inline-flex;

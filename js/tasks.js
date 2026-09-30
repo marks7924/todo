@@ -199,6 +199,8 @@ const Tasks = (() => {
 
   let dragId = null;
 
+  function getDragId() { return dragId; }
+
   function onDragStart(e) {
     dragId = e.currentTarget.dataset.id;
     e.currentTarget.classList.add('dragging');
@@ -214,17 +216,27 @@ const Tasks = (() => {
   }
   function onDrop(e) {
     e.preventDefault();
+    e.stopPropagation();
     const targetRow = e.currentTarget;
     targetRow.classList.remove('drag-over');
     const targetId = targetRow.dataset.id;
+
     if (dragId && dragId !== targetId) {
-      // Swap plannedDates
       const dragTask = Store.getTask(dragId);
       const targetTask = Store.getTask(targetId);
       if (dragTask && targetTask) {
-        const dragDate = dragTask.plannedDate;
-        Store.updateTask(dragId, { plannedDate: targetTask.plannedDate });
-        Store.updateTask(targetId, { plannedDate: dragDate });
+        const updates = {};
+        if (dragTask.plannedDate !== targetTask.plannedDate) {
+          updates.plannedDate = targetTask.plannedDate;
+        }
+        if (dragTask.projectId !== targetTask.projectId) {
+          updates.projectId = targetTask.projectId;
+        }
+        if (Object.keys(updates).length > 0) {
+          Store.updateTask(dragId, updates);
+        }
+
+        Store.reorderTask(dragId, targetId);
         App.refresh();
         UI.toast('Task moved.');
       }
@@ -232,6 +244,7 @@ const Tasks = (() => {
   }
   function onDragEnd(e) {
     e.currentTarget.classList.remove('dragging');
+    document.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
     dragId = null;
   }
 
@@ -392,5 +405,6 @@ const Tasks = (() => {
     closeModal,
     handleDelete,
     initModal,
+    getDragId,
   };
 })();

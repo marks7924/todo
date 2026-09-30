@@ -252,6 +252,28 @@ const Projects = (() => {
     Object.entries(dateGroups).forEach(([date, dateTasks]) => {
       const group = document.createElement('div');
       group.className = 'project-date-group';
+
+      group.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        group.classList.add('group-drag-over');
+      });
+      group.addEventListener('dragleave', (e) => {
+        if (!group.contains(e.relatedTarget)) {
+          group.classList.remove('group-drag-over');
+        }
+      });
+      group.addEventListener('drop', (e) => {
+        group.classList.remove('group-drag-over');
+        if (e.target.closest('.task-row')) return;
+        e.preventDefault();
+        const dragId = Tasks.getDragId();
+        if (dragId) {
+          Store.updateTask(dragId, { plannedDate: date, projectId });
+          App.refresh();
+          UI.toast(`Task scheduled for ${Utils.formatShortDate(date)}.`);
+        }
+      });
+
       const heading = document.createElement('div');
       heading.className = 'project-date-heading';
       heading.textContent = Utils.formatLongDate(date).toUpperCase();
@@ -265,17 +287,42 @@ const Projects = (() => {
       body.appendChild(group);
     });
 
-    if (undated.length) {
+    if (undated.length || Object.keys(dateGroups).length > 0) {
+      const unscheduledWrap = document.createElement('div');
+      unscheduledWrap.className = 'project-unscheduled-wrap';
+
+      unscheduledWrap.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        unscheduledWrap.classList.add('group-drag-over');
+      });
+      unscheduledWrap.addEventListener('dragleave', (e) => {
+        if (!unscheduledWrap.contains(e.relatedTarget)) {
+          unscheduledWrap.classList.remove('group-drag-over');
+        }
+      });
+      unscheduledWrap.addEventListener('drop', (e) => {
+        unscheduledWrap.classList.remove('group-drag-over');
+        if (e.target.closest('.task-row')) return;
+        e.preventDefault();
+        const dragId = Tasks.getDragId();
+        if (dragId) {
+          Store.updateTask(dragId, { plannedDate: null, projectId });
+          App.refresh();
+          UI.toast('Task moved to unscheduled.');
+        }
+      });
+
       const label = document.createElement('div');
       label.className = 'project-unscheduled-heading';
       label.textContent = 'Unscheduled';
-      body.appendChild(label);
+      unscheduledWrap.appendChild(label);
       const list = document.createElement('ul');
       list.className = 'task-list';
       undated.forEach(task => {
         list.appendChild(Tasks.buildTaskRow(task, { showProject: false, showDate: false }));
       });
-      body.appendChild(list);
+      unscheduledWrap.appendChild(list);
+      body.appendChild(unscheduledWrap);
     }
 
     if (!tasks.length) {
