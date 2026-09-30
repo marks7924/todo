@@ -84,6 +84,11 @@ const App = (() => {
       document.getElementById('app').classList.toggle('sidebar-collapsed');
     });
 
+    // Study Hub cancel button
+    document.getElementById('studyhub-cancel-btn')?.addEventListener('click', () => {
+      navigate('today');
+    });
+
     // Add task buttons
     document.getElementById('add-task-today').addEventListener('click', () => {
       Tasks.openCreateModal({ date: Utils.todayStr() });

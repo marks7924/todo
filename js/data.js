@@ -373,6 +373,67 @@ const SeedData = (() => {
     Store.save();
   }
 
+  function ensureSeptemberWork() {
+    const state = Store.getState();
+    let proj = state.projects.find(p => p.name === 'September work' || p.id === 'september_work_id');
+    if (!proj) {
+      proj = {
+        id: 'september_work_id',
+        name: 'September work',
+        description: 'Left homework/lectures',
+        startDate: Utils.todayStr(),
+        deadline: Utils.todayStr(),
+        status: 'active',
+        createdAt: new Date().toISOString(),
+      };
+      state.projects.push(proj);
+    }
+
+    const septTasks = [
+      { id: 'muo3npq75w614', title: 'Tari5 2 ( HW )', status: 'completed', completedAt: new Date().toISOString() },
+      { id: 'muo3o5pai3h3x', title: 'Tari5 3 ( HW )', status: 'in-progress', completedAt: null },
+      { id: 'muo3p3t8fgphp', title: 'Arabic n7w  ( HW )', status: 'completed', completedAt: new Date().toISOString() },
+      { id: 'muo3pocz7mz97', title: 'Arabic nsos  ( HW )', status: 'completed', completedAt: new Date().toISOString() },
+      { id: 'muo3pxzq1pra4', title: 'Programming L4  ( HW )', status: 'pending', completedAt: null },
+      { id: 'muo3qgdrfdhjj', title: 'English Vocab 1  ( HW )', status: 'completed', completedAt: new Date().toISOString() },
+      { id: 'muo3qujv89muf', title: 'English Grammer 1  ( HW )', status: 'pending', completedAt: null },
+      { id: 'muo3r6rn9pf8q', title: 'English vocab 2  ( HW )', status: 'completed', completedAt: new Date().toISOString() },
+      { id: 'muo3rhbs4v7ch', title: 'English Grammer 2  ( HW )', status: 'pending', completedAt: null },
+      { id: 'muo3sxairhort', title: 'Arabic n7w ( HW )', status: 'pending', completedAt: null },
+      { id: 'muo3ve8pn95tc', title: 'Arabic nsos ( HW )', status: 'pending', completedAt: null },
+      { id: 'muo3w5whq5o3x', title: 'Arabic t3beer ( HW )', status: 'pending', completedAt: null },
+      { id: 'muo3y0hcb56dy', title: 'Lecture Arabic T3beer', estimatedMinutes: 45, status: 'pending', completedAt: null },
+      { id: 'muo3ydpkzm06d', title: 'Lecture Arabic N7w', estimatedMinutes: 45, status: 'pending', completedAt: null },
+      { id: 'muo3yq4qwvs60', title: 'Lecture Arabic Nsos', estimatedMinutes: 90, status: 'pending', completedAt: null }
+    ];
+
+    let changed = false;
+    septTasks.forEach(st => {
+      if (!state.tasks.some(t => t.id === st.id)) {
+        state.tasks.push({
+          id: st.id,
+          title: st.title,
+          notes: '',
+          status: st.status,
+          priority: 'normal',
+          plannedDate: null,
+          time: null,
+          estimatedMinutes: st.estimatedMinutes || null,
+          projectId: proj.id,
+          recurrenceId: null,
+          subtasks: [],
+          createdAt: new Date().toISOString(),
+          completedAt: st.completedAt || null,
+        });
+        changed = true;
+      }
+    });
+
+    if (changed || !state.projects.some(p => p.id === proj.id)) {
+      Store.save();
+    }
+  }
+
   function isSeeded() {
     const s = Store.getState();
     return s.tasks.length > 0 || s.projects.length > 0 || s.recurrences.length > 0 || (s.events && s.events.length > 0);
@@ -380,7 +441,8 @@ const SeedData = (() => {
 
   function initIfNeeded() {
     if (!isSeeded()) seed();
+    ensureSeptemberWork();
   }
 
-  return { initIfNeeded, seed };
+  return { initIfNeeded, seed, ensureSeptemberWork };
 })();
