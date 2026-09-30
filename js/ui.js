@@ -413,11 +413,26 @@ const UI = (() => {
     const notesLabel = document.createElement('div');
     notesLabel.className = 'detail-notes-label';
     notesLabel.textContent = 'Notes';
-    const notesText = document.createElement('div');
-    notesText.className = `detail-notes-text${task.notes ? '' : ' detail-notes-empty'}`;
-    notesText.textContent = task.notes || 'No notes.';
+    
+    const notesInput = document.createElement('textarea');
+    notesInput.className = 'form-input form-textarea detail-notes-input';
+    notesInput.placeholder = 'Add notes...';
+    notesInput.rows = 3;
+    notesInput.value = task.notes || '';
+    notesInput.style.fontSize = 'var(--text-sm)';
+    notesInput.style.marginTop = '6px';
+    notesInput.style.resize = 'vertical';
+
+    notesInput.addEventListener('change', () => {
+      const updatedNotes = notesInput.value.trim();
+      if (!isRecurrence) {
+        Store.updateTask(task.id, { notes: updatedNotes });
+        UI.toast('Notes saved.');
+      }
+    });
+
     notesSection.appendChild(notesLabel);
-    notesSection.appendChild(notesText);
+    notesSection.appendChild(notesInput);
     inner.appendChild(notesSection);
 
     // Subtasks

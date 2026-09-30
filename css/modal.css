@@ -54,12 +54,15 @@
   text-transform: uppercase;
 }
 
-.modal-form {
+.modal-form,
+#task-form,
+#project-form {
   display: flex;
   flex-direction: column;
   flex: 1;
   min-height: 0;
-  overflow: hidden;
+  overflow-y: auto;
+  padding-top: var(--space-4);
 }
 
 .modal-body-scroll {
@@ -286,6 +289,10 @@
   border-top: 1px solid var(--border-subtle);
   flex-shrink: 0;
   background: var(--sidebar-bg);
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+  margin-top: auto;
 }
 
 /* Shortcuts */
