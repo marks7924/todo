@@ -1,0 +1,111 @@
+/* tokens.css — Design tokens */
+
+:root {
+  /* Dark theme (default) */
+  --bg:         #101010;
+  --sidebar-bg: #151515;
+  --surface:    #1B1B1B;
+  --surface-2:  #212121;
+  --border:     #2A2A2A;
+  --border-subtle: #222222;
+
+  --text-primary:   #F1F1EF;
+  --text-secondary: #929292;
+  --text-muted:     #5F5F5F;
+
+  --accent:       #D6B36A;
+  --accent-muted: rgba(214, 179, 106, 0.12);
+  --success:      #7FA58A;
+  --danger:       #B56B6B;
+  --danger-muted: rgba(181, 107, 107, 0.10);
+
+  /* Spacing */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+
+  /* Typography */
+  --font-ui:     'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-serif:  'Instrument Serif', Georgia, serif;
+
+  --text-xs:   11px;
+  --text-sm:   13px;
+  --text-base: 14px;
+  --text-md:   15px;
+  --text-lg:   18px;
+  --text-xl:   22px;
+  --text-2xl:  28px;
+  --text-3xl:  36px;
+
+  --weight-normal:  400;
+  --weight-medium:  500;
+  --weight-semi:    600;
+
+  /* Radius */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.4);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.5);
+
+  /* Transitions */
+  --transition-fast: 120ms ease;
+  --transition-base: 180ms ease;
+  --transition-slow: 280ms ease;
+
+  /* Layout */
+  --sidebar-width:       220px;
+  --sidebar-collapsed-w: 56px;
+  --details-width:       300px;
+
+  /* Event type colors — dark mode */
+  --event-red:    #B56B6B;
+  --event-amber:  #C4963A;
+  --event-blue:   #6B8CB5;
+  --event-rose:   #B5798C;
+  --event-green:  #7FA58A;
+  --event-muted:  #808080;
+  --event-indigo: #7B88B5;
+}
+
+/* Light theme */
+[data-theme="light"] {
+  --bg:         #F7F5F0;
+  --sidebar-bg: #EFEDE8;
+  --surface:    #ECEAE5;
+  --surface-2:  #E4E2DD;
+  --border:     #D8D6D0;
+  --border-subtle: #E2E0DB;
+
+  --text-primary:   #1A1A18;
+  --text-secondary: #5C5C58;
+  --text-muted:     #9A9A96;
+
+  --accent:       #B8922C;
+  --accent-muted: rgba(184, 146, 44, 0.12);
+  --success:      #4E7A5E;
+  --danger:       #9B4343;
+  --danger-muted: rgba(155, 67, 67, 0.10);
+
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.07);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.10);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.14);
+
+  /* Event type colors — light mode */
+  --event-red:    #9B4343;
+  --event-amber:  #9B7A2A;
+  --event-blue:   #3A6B9B;
+  --event-rose:   #9B4A6B;
+  --event-green:  #4E7A5E;
+  --event-muted:  #5C5C58;
+  --event-indigo: #4A5A9B;
+}

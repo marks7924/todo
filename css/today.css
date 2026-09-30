@@ -1,0 +1,169 @@
+/* today.css — Today page */
+
+.today-header {
+  margin-bottom: var(--space-8);
+}
+
+.today-date-line {
+  margin-bottom: var(--space-2);
+}
+
+.today-date-serif {
+  font-family: var(--font-serif);
+  font-size: var(--text-3xl);
+  font-weight: 400;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+}
+
+.today-greeting {
+  font-size: var(--text-base);
+  color: var(--text-muted);
+  font-weight: var(--weight-normal);
+}
+
+/* Today section */
+.today-section {
+  margin-bottom: var(--space-8);
+}
+
+.today-section-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: var(--space-5);
+}
+
+.task-count-label {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+}
+
+/* Progress / footer */
+.today-footer {
+  margin-top: var(--space-8);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--border-subtle);
+}
+
+.progress-text {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  margin-bottom: var(--space-3);
+}
+
+/* Overdue section */
+.overdue-section {
+  background: var(--danger-muted);
+  border: 1px solid rgba(181, 107, 107, 0.2);
+  border-radius: var(--radius-md);
+  padding: var(--space-4) var(--space-5);
+  margin-bottom: var(--space-8);
+}
+.overdue-label {
+  color: var(--danger);
+  margin-bottom: var(--space-3);
+}
+.overdue-actions {
+  display: flex;
+  gap: var(--space-5);
+  margin-top: var(--space-4);
+  padding-top: var(--space-3);
+  border-top: 1px solid rgba(181,107,107,0.15);
+}
+
+/* Plan my day section */
+.plan-section {
+  margin-top: var(--space-8);
+  border-top: 1px solid var(--border-subtle);
+  padding-top: var(--space-6);
+}
+.plan-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-5);
+}
+.plan-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+.plan-slot {
+  display: flex;
+  gap: var(--space-4);
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--border-subtle);
+  align-items: flex-start;
+}
+.plan-slot:last-child { border-bottom: none; }
+.plan-time {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  width: 48px;
+  flex-shrink: 0;
+  font-feature-settings: "tnum";
+  padding-top: 1px;
+}
+.plan-slot-content {
+  flex: 1;
+}
+.plan-slot-title {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: var(--text-primary);
+}
+.plan-slot-duration {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+.plan-break {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* Streak */
+.streak-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-5);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border-subtle);
+}
+.streak-label {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  margin-right: var(--space-2);
+}
+.streak-dot {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  color: var(--text-muted);
+  flex-direction: column;
+}
+.streak-dot.done {
+  background: var(--success);
+  border-color: var(--success);
+  color: var(--bg);
+}
+.streak-dot .day-abbr {
+  font-size: 9px;
+  opacity: 0.7;
+}
+.streak-count {
+  margin-left: auto;
+  font-size: var(--text-sm);
+  color: var(--accent);
+  font-weight: var(--weight-medium);
+}

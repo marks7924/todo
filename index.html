@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Planner — a calm, minimal daily task planner for focused productivity. Manage tasks, projects, and your daily schedule." />
+  <title>Planner — Daily Productivity</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/reset.css" />
+  <link rel="stylesheet" href="css/tokens.css" />
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/layout.css" />
+  <link rel="stylesheet" href="css/sidebar.css" />
+  <link rel="stylesheet" href="css/today.css" />
+  <link rel="stylesheet" href="css/tasks.css" />
+  <link rel="stylesheet" href="css/details.css" />
+  <link rel="stylesheet" href="css/modal.css" />
+  <link rel="stylesheet" href="css/calendar.css" />
+  <link rel="stylesheet" href="css/projects.css" />
+  <link rel="stylesheet" href="css/inbox.css" />
+  <link rel="stylesheet" href="css/settings.css" />
+  <link rel="stylesheet" href="css/responsive.css" />
+</head>
+<body>
+
+  <!-- APP SHELL -->
+  <div id="app" class="app">
+
+    <!-- SIDEBAR -->
+    <aside id="sidebar" class="sidebar" role="navigation" aria-label="Main navigation">
+      <div class="sidebar-header">
+        <span class="sidebar-logo">Planner</span>
+        <button id="sidebar-toggle" class="icon-btn" aria-label="Toggle sidebar" title="Toggle sidebar">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2" y="4" width="12" height="1.2" rx="0.6" fill="currentColor"/><rect x="2" y="7.4" width="12" height="1.2" rx="0.6" fill="currentColor"/><rect x="2" y="10.8" width="12" height="1.2" rx="0.6" fill="currentColor"/></svg>
+        </button>
+      </div>
+
+      <nav class="sidebar-nav">
+        <ul class="nav-list" role="list">
+          <li>
+            <button class="nav-item active" data-view="today" id="nav-today" role="button" aria-current="page">
+              <svg class="nav-icon" width="15" height="15" viewBox="0 0 15 15" fill="none"><rect x="2" y="2" width="11" height="11" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M5 2V1M10 2V1" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M2 5.5h11" stroke="currentColor" stroke-width="1.1"/></svg>
+              <span>Today</span>
+              <span class="nav-badge" id="today-badge"></span>
+            </button>
+          </li>
+          <li>
+            <button class="nav-item" data-view="inbox" id="nav-inbox">
+              <svg class="nav-icon" width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M2 9.5l2.5-5h6L13 9.5v3H2v-3z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/><path d="M2 9.5h3.5l1 1.5h2l1-1.5H13" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>
+              <span>Inbox</span>
+              <span class="nav-badge" id="inbox-badge"></span>
+            </button>
+          </li>
+          <li>
+            <button class="nav-item" data-view="calendar" id="nav-calendar">
+              <svg class="nav-icon" width="15" height="15" viewBox="0 0 15 15" fill="none"><rect x="1.5" y="2.5" width="12" height="11" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M5 2V1M10 2V1" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M1.5 6h12" stroke="currentColor" stroke-width="1.1"/></svg>
+              <span>Calendar</span>
+            </button>
+          </li>
+          <li>
+            <button class="nav-item" data-view="projects" id="nav-projects">
+              <svg class="nav-icon" width="15" height="15" viewBox="0 0 15 15" fill="none"><rect x="1.5" y="1.5" width="5.5" height="5.5" rx="1" stroke="currentColor" stroke-width="1.2"/><rect x="8" y="1.5" width="5.5" height="5.5" rx="1" stroke="currentColor" stroke-width="1.2"/><rect x="1.5" y="8" width="5.5" height="5.5" rx="1" stroke="currentColor" stroke-width="1.2"/><rect x="8" y="8" width="5.5" height="5.5" rx="1" stroke="currentColor" stroke-width="1.2"/></svg>
+              <span>Projects</span>
+            </button>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">Recent</div>
+        <ul class="nav-list recent-projects-list" id="recent-projects-list" role="list">
+          <!-- Populated by JS -->
+        </ul>
+      </div>
+
+      <div class="sidebar-footer">
+        <button class="nav-item" data-view="settings" id="nav-settings">
+          <svg class="nav-icon" width="15" height="15" viewBox="0 0 15 15" fill="none"><circle cx="7.5" cy="7.5" r="2" stroke="currentColor" stroke-width="1.2"/><path d="M7.5 1.5v1M7.5 12.5v1M1.5 7.5h1M12.5 7.5h1M3.2 3.2l.7.7M11.1 11.1l.7.7M11.1 3.9l-.7.7M3.9 11.1l-.7.7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+          <span>Settings</span>
+        </button>
+        <button class="nav-item" id="theme-toggle" aria-label="Toggle theme">
+          <svg class="nav-icon" id="theme-icon-sun" width="15" height="15" viewBox="0 0 15 15" fill="none" style="display:none"><circle cx="7.5" cy="7.5" r="3" stroke="currentColor" stroke-width="1.2"/><path d="M7.5 1v1.5M7.5 12.5V14M1 7.5h1.5M12.5 7.5H14M3 3l1 1M11 11l1 1M11 3l-1 1M3 11l1-1" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+          <svg class="nav-icon" id="theme-icon-moon" width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M12.5 8.5A5 5 0 016.5 2.5a5 5 0 100 10 5 5 0 006-4z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>
+          <span id="theme-label">Light mode</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT AREA -->
+    <main id="main" class="main" role="main">
+
+      <!-- TODAY VIEW -->
+      <section id="view-today" class="view active" aria-label="Today's tasks">
+        <div class="view-inner">
+          <header class="today-header">
+            <div class="today-date-line">
+              <h1 class="today-date-serif" id="today-date-heading"></h1>
+            </div>
+            <p class="today-greeting" id="today-greeting"></p>
+          </header>
+
+          <!-- Overdue section -->
+          <div id="overdue-section" class="overdue-section" style="display:none">
+            <div class="section-label overdue-label">Overdue</div>
+            <ul class="task-list" id="overdue-list" role="list"></ul>
+            <div class="overdue-actions">
+              <button class="link-btn" id="move-overdue-all">Move all to today</button>
+              <button class="link-btn danger-text" id="dismiss-overdue">Dismiss</button>
+            </div>
+          </div>
+
+          <!-- Today tasks -->
+          <div class="today-section">
+            <div class="today-section-header">
+              <div class="section-label" id="today-section-label">Today</div>
+              <span class="task-count-label" id="today-task-count"></span>
+            </div>
+
+            <!-- Priority group -->
+            <div id="important-group" class="task-group" style="display:none">
+              <div class="group-label">Important</div>
+              <ul class="task-list" id="important-list" role="list"></ul>
+            </div>
+
+            <ul class="task-list" id="today-list" role="list"></ul>
+
+            <!-- Completed section -->
+            <div id="completed-group" class="task-group" style="display:none">
+              <button class="group-toggle" id="completed-toggle" aria-expanded="false">
+                <span>Completed</span>
+                <span class="completed-count" id="completed-count-label"></span>
+                <svg class="chevron" width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 4l3 3 3-3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+              <ul class="task-list completed-list" id="completed-list" role="list" style="display:none"></ul>
+            </div>
+
+            <!-- Empty state -->
+            <div id="today-empty" class="empty-state" style="display:none">
+              <p class="empty-title">You're all caught up.</p>
+              <p class="empty-sub">No tasks for today.</p>
+            </div>
+          </div>
+
+          <!-- Progress -->
+          <div class="today-footer" id="today-footer" style="display:none">
+            <div class="progress-text" id="progress-text"></div>
+            <div class="progress-bar-wrap" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" id="progress-bar-wrap">
+              <div class="progress-bar-fill" id="progress-bar-fill"></div>
+            </div>
+          </div>
+
+          <button class="add-task-btn" id="add-task-today" aria-label="Add a new task for today">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 1v11M1 6.5h11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            Add task
+          </button>
+        </div>
+      </section>
+
+      <!-- INBOX VIEW -->
+      <section id="view-inbox" class="view" aria-label="Inbox">
+        <div class="view-inner">
+          <header class="page-header">
+            <h1 class="page-title">Inbox</h1>
+            <p class="page-sub">Tasks without a scheduled date.</p>
+          </header>
+          <ul class="task-list" id="inbox-list" role="list"></ul>
+          <div id="inbox-empty" class="empty-state" style="display:none">
+            <p class="empty-title">Inbox is clear.</p>
+            <p class="empty-sub">All tasks have been scheduled.</p>
+          </div>
+          <button class="add-task-btn" id="add-task-inbox" aria-label="Add a task to inbox">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 1v11M1 6.5h11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            Add task
+          </button>
+        </div>
+      </section>
+
+      <!-- CALENDAR VIEW -->
+      <section id="view-calendar" class="view" aria-label="Calendar">
+        <div class="view-inner">
+          <header class="page-header calendar-page-header">
+            <div class="cal-header-left">
+              <div class="cal-nav">
+                <button class="icon-btn" id="cal-prev" aria-label="Previous month" title="Previous">
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+                <h1 class="page-title" id="cal-month-heading"></h1>
+                <button class="icon-btn" id="cal-next" aria-label="Next month" title="Next">
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 2l5 5-5 5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+                <button class="btn-ghost cal-today-btn" id="cal-today-btn">Today</button>
+              </div>
+            </div>
+
+            <div class="cal-header-right">
+              <!-- View mode switcher -->
+              <div class="view-mode-switcher" role="group" aria-label="Calendar view mode">
+                <button class="view-mode-btn active" data-mode="month">Month</button>
+                <button class="view-mode-btn" data-mode="week">Week</button>
+              </div>
+
+              <!-- Draw shape toolbar -->
+              <div class="cal-draw-toolbar" role="group" aria-label="Draw shapes on calendar" id="cal-draw-toolbar">
+                <span class="cal-draw-label">Draw:</span>
+                <button class="cal-draw-btn" id="draw-circle-btn" title="Draw a circle on a day" aria-pressed="false">
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                    <circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.5"/>
+                  </svg>
+                  Circle
+                </button>
+                <button class="cal-draw-btn" id="draw-x-btn" title="Draw a cross / X on a day" aria-pressed="false">
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                    <path d="M2 2l10 10M12 2L2 12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                  </svg>
+                  Cross
+                </button>
+                <button class="cal-draw-btn cal-draw-erase-btn" id="draw-erase-btn" title="Erase drawn marks" aria-pressed="false" style="display:none">
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                    <path d="M9.5 2.5L11.5 4.5l-7 7H2.5V9l7-6.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
+                    <path d="M2 12h10" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+                  </svg>
+                  Erase
+                </button>
+              </div>
+
+              <!-- Add Event primary button -->
+              <button class="btn-primary cal-add-btn" id="add-event-btn">
+                <svg width="12" height="12" viewBox="0 0 13 13" fill="none"><path d="M6.5 1v11M1 6.5h11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                <span>Add Event</span>
+              </button>
+            </div>
+          </header>
+
+          <!-- CALENDAR FILTER BAR -->
+          <div class="cal-filter-bar" role="group" aria-label="Calendar filters">
+            <span class="cal-filter-label">Filter:</span>
+            <button class="cal-filter-btn active" data-filter="events" title="Toggle events">
+              <span class="cal-filter-dot cal-dot-event"></span> Events
+            </button>
+            <button class="cal-filter-btn active" data-filter="deadlines" title="Toggle deadlines">
+              <span class="cal-filter-dot cal-dot-deadline"></span> Deadlines
+            </button>
+            <button class="cal-filter-btn active" data-filter="tasks" title="Toggle tasks">
+              <span class="cal-filter-dot cal-dot-task"></span> Tasks
+            </button>
+            <button class="cal-filter-btn active" data-filter="recurring" title="Toggle recurring tasks">
+              <span class="cal-filter-dot cal-dot-recur"></span> Recurring
+            </button>
+          </div>
+
+          <div class="calendar-grid-wrap" id="cal-grid-wrap">
+            <div class="calendar-weekdays" id="cal-weekdays" role="row"></div>
+            <div class="calendar-grid" id="cal-grid" role="grid" aria-label="Calendar"></div>
+          </div>
+
+          <!-- DAY DETAIL PANEL -->
+          <div class="cal-day-detail-panel" id="cal-day-detail-panel">
+            <div class="cal-day-detail-header">
+              <div class="section-label" id="cal-detail-date-heading">TODAY</div>
+              <div class="cal-detail-header-actions">
+                <button class="link-btn" id="cal-add-event-btn">+ Add Event</button>
+                <button class="link-btn" id="cal-add-task-btn">+ Add Task</button>
+              </div>
+            </div>
+
+            <!-- Empty state -->
+            <div id="cal-day-empty" class="empty-state" style="display:none">
+              <p class="empty-title">Nothing scheduled for this day.</p>
+            </div>
+
+            <!-- Subsections -->
+            <div id="cal-detail-events-section" class="cal-detail-sub-section" style="display:none">
+              <div class="cal-sub-label">Events & Marks</div>
+              <div id="cal-detail-events-list" class="cal-detail-list"></div>
+            </div>
+
+            <div id="cal-detail-deadlines-section" class="cal-detail-sub-section" style="display:none">
+              <div class="cal-sub-label">Project Deadlines</div>
+              <div id="cal-detail-deadlines-list" class="cal-detail-list"></div>
+            </div>
+
+            <div id="cal-detail-tasks-section" class="cal-detail-sub-section" style="display:none">
+              <div class="cal-sub-label">Tasks</div>
+              <ul id="cal-detail-tasks-list" class="task-list"></ul>
+            </div>
+
+            <div id="cal-detail-recurring-section" class="cal-detail-sub-section" style="display:none">
+              <div class="cal-sub-label">Recurring Routine</div>
+              <ul id="cal-detail-recurring-list" class="task-list"></ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PROJECTS VIEW -->
+      <section id="view-projects" class="view" aria-label="Projects">
+        <div class="view-inner">
+          <header class="page-header">
+            <h1 class="page-title">Projects</h1>
+            <button class="text-btn" id="create-project-btn">+ New project</button>
+          </header>
+          <div class="projects-grid" id="projects-grid"></div>
+          <div id="projects-empty" class="empty-state" style="display:none">
+            <p class="empty-title">No projects yet.</p>
+            <p class="empty-sub">Create a project to organize related tasks.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- PROJECT DETAIL VIEW -->
+      <section id="view-project-detail" class="view" aria-label="Project detail">
+        <div class="view-inner">
+          <div class="back-link-wrap">
+            <button class="back-link" id="back-to-projects">
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M8 2L3 6l5 4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Projects
+            </button>
+          </div>
+          <header class="project-detail-header" id="project-detail-header"></header>
+          <div class="project-detail-body" id="project-detail-body"></div>
+          <button class="add-task-btn" id="add-task-project" aria-label="Add task to project">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 1v11M1 6.5h11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            Add task
+          </button>
+        </div>
+      </section>
+
+      <!-- SETTINGS VIEW -->
+      <section id="view-settings" class="view" aria-label="Settings">
+        <div class="view-inner">
+          <header class="page-header">
+            <h1 class="page-title">Settings</h1>
+          </header>
+          <div class="settings-body" id="settings-body"></div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- TASK DETAILS PANEL -->
+    <aside id="details-panel" class="details-panel" aria-label="Task details" aria-hidden="true">
+      <div class="details-inner" id="details-inner">
+        <!-- Populated by JS -->
+      </div>
+    </aside>
+
+  </div><!-- /app -->
+
+  <!-- TASK MODAL -->
+  <div id="task-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-hidden="true">
+    <div class="modal-box" id="task-modal-box">
+      <div class="modal-header">
+        <h2 class="modal-title" id="modal-title">New task</h2>
+        <button class="icon-btn modal-close" id="modal-close-btn" aria-label="Close modal">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 2l10 10M12 2L2 12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <form id="task-form" novalidate>
+        <div class="form-field">
+          <label class="form-label" for="task-title-input">What needs to be done?</label>
+          <input class="form-input task-title-input" id="task-title-input" type="text" placeholder="Task title..." autocomplete="off" required />
+        </div>
+        <div class="form-row">
+          <div class="form-field">
+            <label class="form-label" for="task-date-input">Date</label>
+            <input class="form-input" id="task-date-input" type="date" />
+          </div>
+          <div class="form-field">
+            <label class="form-label" for="task-time-input">Time</label>
+            <input class="form-input" id="task-time-input" type="time" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-field">
+            <label class="form-label" for="task-project-select">Project</label>
+            <select class="form-input" id="task-project-select">
+              <option value="">No project</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label class="form-label" for="task-duration-select">Est. duration</label>
+            <select class="form-input" id="task-duration-select">
+              <option value="">—</option>
+              <option value="15">15 min</option>
+              <option value="30">30 min</option>
+              <option value="45">45 min</option>
+              <option value="60">1 hour</option>
+              <option value="90">1.5 hours</option>
+              <option value="120">2 hours</option>
+              <option value="180">3 hours</option>
+              <option value="240">4 hours</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-field">
+          <label class="form-label">Priority</label>
+          <div class="priority-options" role="radiogroup" aria-label="Priority">
+            <label class="priority-option">
+              <input type="radio" name="task-priority" value="normal" checked /> Normal
+            </label>
+            <label class="priority-option">
+              <input type="radio" name="task-priority" value="important" /> Important
+            </label>
+          </div>
+        </div>
+        <div class="form-field">
+          <label class="form-label">Recurrence</label>
+          <select class="form-input" id="task-recurrence-select">
+            <option value="">None</option>
+            <option value="daily">Every day</option>
+            <option value="weekdays">Every weekday</option>
+            <option value="weekly">Every week</option>
+            <option value="custom">Custom days...</option>
+          </select>
+          <div id="recurrence-days-wrap" style="display:none" class="recurrence-days-wrap">
+            <label class="form-label" style="margin-top:10px">Repeat on</label>
+            <div class="day-chips" role="group" aria-label="Days of week">
+              <label class="day-chip"><input type="checkbox" value="1" /> Mon</label>
+              <label class="day-chip"><input type="checkbox" value="2" /> Tue</label>
+              <label class="day-chip"><input type="checkbox" value="3" /> Wed</label>
+              <label class="day-chip"><input type="checkbox" value="4" /> Thu</label>
+              <label class="day-chip"><input type="checkbox" value="5" /> Fri</label>
+              <label class="day-chip"><input type="checkbox" value="6" /> Sat</label>
+              <label class="day-chip"><input type="checkbox" value="0" /> Sun</label>
+            </div>
+          </div>
+        </div>
+        <div class="form-field">
+          <label class="form-label" for="task-notes-input">Notes</label>
+          <textarea class="form-input form-textarea" id="task-notes-input" placeholder="Optional notes..." rows="3"></textarea>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-ghost" id="modal-cancel-btn">Cancel</button>
+          <button type="submit" class="btn-primary" id="modal-submit-btn">Add task</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- PROJECT MODAL -->
+  <div id="project-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="project-modal-title" aria-hidden="true">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h2 class="modal-title" id="project-modal-title">New project</h2>
+        <button class="icon-btn modal-close" id="project-modal-close" aria-label="Close">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 2l10 10M12 2L2 12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <form id="project-form" novalidate>
+        <div class="form-field">
+          <label class="form-label" for="proj-name-input">Project name</label>
+          <input class="form-input" id="proj-name-input" type="text" placeholder="e.g. Portfolio Website" required />
+        </div>
+        <div class="form-field">
+          <label class="form-label" for="proj-desc-input">Description</label>
+          <input class="form-input" id="proj-desc-input" type="text" placeholder="Optional description..." />
+        </div>
+        <div class="form-row">
+          <div class="form-field">
+            <label class="form-label" for="proj-start-input">Start date</label>
+            <input class="form-input" id="proj-start-input" type="date" />
+          </div>
+          <div class="form-field">
+            <label class="form-label" for="proj-deadline-input">Deadline</label>
+            <input class="form-input" id="proj-deadline-input" type="date" />
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-ghost" id="project-modal-cancel">Cancel</button>
+          <button type="submit" class="btn-primary">Save project</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- EVENT MODAL -->
+  <div id="event-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="event-modal-title-text" aria-hidden="true">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h2 class="modal-title" id="event-modal-title-text">New event</h2>
+        <button class="icon-btn modal-close" id="event-modal-close" aria-label="Close modal">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 2l10 10M12 2L2 12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <form id="event-form" class="modal-form" novalidate>
+        <div class="modal-body-scroll">
+          <div class="form-field">
+            <label class="form-label" for="event-title-input">Event title</label>
+            <input class="form-input task-title-input" id="event-title-input" type="text" placeholder="Title..." autocomplete="off" required />
+          </div>
+
+          <div class="form-row" style="align-items: center;">
+            <div class="form-field">
+              <label class="form-label" for="event-date-input">Date</label>
+              <input class="form-input" id="event-date-input" type="date" required />
+            </div>
+            <div class="form-field" style="padding-top: 18px;">
+              <label class="form-checkbox-label">
+                <input type="checkbox" id="event-allday-toggle" checked />
+                <span>All-day event</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-row" id="event-time-row" style="display:none">
+            <div class="form-field">
+              <label class="form-label" for="event-start-time">Start time</label>
+              <input class="form-input" id="event-start-time" type="time" />
+            </div>
+            <div class="form-field">
+              <label class="form-label" for="event-end-time">End time</label>
+              <input class="form-input" id="event-end-time" type="time" />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-field">
+              <label class="form-label" for="event-mark-select">Mark Shape</label>
+              <select class="form-input" id="event-mark-select">
+                <option value="circle">● Circle</option>
+                <option value="x">✕ Cross / X</option>
+                <option value="ring">◉ Ring</option>
+                <option value="diamond">◆ Diamond</option>
+                <option value="star">★ Star</option>
+                <option value="square">■ Square</option>
+                <option value="triangle">▲ Triangle</option>
+                <option value="heart">♥ Heart</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label class="form-label" for="event-mark-size-select">Mark Size</label>
+              <select class="form-input" id="event-mark-size-select">
+                <option value="sm">Small (S)</option>
+                <option value="md">Medium (M)</option>
+                <option value="lg">Large (L)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label class="form-label" for="event-mark-text-input">Center Text inside Mark (Optional)</label>
+            <input class="form-input" id="event-mark-text-input" type="text" placeholder="e.g. 5, A, EX, 100 (or leave blank)" maxlength="6" />
+          </div>
+
+          <div class="form-field">
+            <label class="form-label" for="event-type-select">Category</label>
+            <select class="form-input" id="event-type-select">
+              <option value="event">Event</option>
+              <option value="exam">Exam</option>
+              <option value="deadline">Deadline</option>
+              <option value="meeting">Meeting</option>
+              <option value="appointment">Appointment</option>
+              <option value="birthday">Birthday</option>
+              <option value="reminder">Reminder</option>
+              <option value="custom">Custom</option>
+            </select>
+          </div>
+
+          <div class="form-field">
+            <label class="form-label">Color</label>
+            <div class="event-color-picker" role="radiogroup" aria-label="Color tag">
+              <label class="color-option color-muted" title="Default / Muted"><input type="radio" name="event-color" value="muted" checked /><span class="color-swatch-dot"></span></label>
+              <label class="color-option color-red" title="Red"><input type="radio" name="event-color" value="red" /><span class="color-swatch-dot"></span></label>
+              <label class="color-option color-amber" title="Amber"><input type="radio" name="event-color" value="amber" /><span class="color-swatch-dot"></span></label>
+              <label class="color-option color-blue" title="Blue"><input type="radio" name="event-color" value="blue" /><span class="color-swatch-dot"></span></label>
+              <label class="color-option color-green" title="Green"><input type="radio" name="event-color" value="green" /><span class="color-swatch-dot"></span></label>
+              <label class="color-option color-purple" title="Purple"><input type="radio" name="event-color" value="purple" /><span class="color-swatch-dot"></span></label>
+              <label class="color-option color-rose" title="Rose"><input type="radio" name="event-color" value="rose" /><span class="color-swatch-dot"></span></label>
+              
+              <!-- Custom Color Picker -->
+              <label class="color-option color-custom" title="Custom Hex Color">
+                <input type="radio" name="event-color" value="custom" id="color-radio-custom" />
+                <span class="color-swatch-custom-wrap">
+                  <input type="color" id="event-custom-color" value="#3b82f6" title="Pick color" />
+                </span>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label class="form-label" for="event-repeat-select">Repeat</label>
+            <select class="form-input" id="event-repeat-select">
+              <option value="">Never</option>
+              <option value="daily">Every day</option>
+              <option value="weekdays">Every weekday (Mon-Fri)</option>
+              <option value="weekly">Every week</option>
+              <option value="monthly">Every month</option>
+              <option value="yearly">Every year</option>
+            </select>
+          </div>
+
+          <div id="event-recurrence-block" style="display:none" class="recurrence-block">
+            <div class="form-field" id="event-recur-days-field" style="display:none">
+              <label class="form-label">On days</label>
+              <div class="day-chips" id="event-recur-days-group" role="group">
+                <label class="day-chip"><input type="checkbox" value="1" /> Mon</label>
+                <label class="day-chip"><input type="checkbox" value="2" /> Tue</label>
+                <label class="day-chip"><input type="checkbox" value="3" /> Wed</label>
+                <label class="day-chip"><input type="checkbox" value="4" /> Thu</label>
+                <label class="day-chip"><input type="checkbox" value="5" /> Fri</label>
+                <label class="day-chip"><input type="checkbox" value="6" /> Sat</label>
+                <label class="day-chip"><input type="checkbox" value="0" /> Sun</label>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-field">
+                <label class="form-label" for="event-recur-end-select">Ends</label>
+                <select class="form-input" id="event-recur-end-select">
+                  <option value="never">Never</option>
+                  <option value="date">On date</option>
+                  <option value="count">After occurrences</option>
+                </select>
+              </div>
+              <div class="form-field" id="event-recur-end-date-field" style="display:none">
+                <label class="form-label" for="event-recur-end-date">End date</label>
+                <input class="form-input" id="event-recur-end-date" type="date" />
+              </div>
+              <div class="form-field" id="event-recur-count-field" style="display:none">
+                <label class="form-label" for="event-recur-count">Occurrences</label>
+                <input class="form-input" id="event-recur-count" type="number" min="1" max="100" value="10" />
+              </div>
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label class="form-label" for="event-notes-input">Notes</label>
+            <textarea class="form-input form-textarea" id="event-notes-input" placeholder="Optional notes..." rows="2"></textarea>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn-ghost" id="event-modal-cancel">Cancel</button>
+          <button type="submit" class="btn-primary" id="event-modal-submit">Create event</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- EVENT DETAIL MODAL -->
+  <div id="event-detail-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="event-detail-title" aria-hidden="true">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h2 class="modal-title" id="event-detail-title">Event details</h2>
+        <button class="icon-btn modal-close" id="event-detail-close" aria-label="Close modal">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 2l10 10M12 2L2 12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <div id="event-detail-body"></div>
+    </div>
+  </div>
+
+  <!-- RECURRING ACTION SCOPE MODAL -->
+  <div id="recur-scope-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="recur-scope-title" aria-hidden="true">
+    <div class="modal-box recur-scope-box">
+      <div class="modal-header">
+        <h2 class="modal-title" id="recur-scope-title">Recurring event</h2>
+        <button class="icon-btn modal-close" id="recur-scope-close" aria-label="Close modal">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 2l10 10M12 2L2 12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p class="recur-scope-subtitle" id="recur-scope-action-label">Edit recurring event</p>
+        <div class="recur-scope-options">
+          <label class="recur-scope-option">
+            <input type="radio" name="recur-scope" value="this" checked />
+            <div>
+              <strong>Only this occurrence</strong>
+              <p>Changes will apply to this date only.</p>
+            </div>
+          </label>
+          <label class="recur-scope-option">
+            <input type="radio" name="recur-scope" value="future" />
+            <div>
+              <strong>This and future occurrences</strong>
+              <p>Changes will apply from this date forward.</p>
+            </div>
+          </label>
+          <label class="recur-scope-option">
+            <input type="radio" name="recur-scope" value="all" />
+            <div>
+              <strong>All occurrences</strong>
+              <p>Changes will apply to every instance in the series.</p>
+            </div>
+          </label>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-ghost" id="recur-scope-cancel">Cancel</button>
+        <button type="button" class="btn-primary" id="recur-scope-confirm">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- KEYBOARD SHORTCUTS PANEL -->
+  <div id="shortcuts-panel" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="shortcuts-title" aria-hidden="true">
+    <div class="modal-box shortcuts-box">
+      <div class="modal-header">
+        <h2 class="modal-title" id="shortcuts-title">Keyboard shortcuts</h2>
+        <button class="icon-btn modal-close" id="shortcuts-close" aria-label="Close">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 2l10 10M12 2L2 12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <div class="shortcuts-list">
+        <div class="shortcut-row"><kbd>N</kbd><span>New task</span></div>
+        <div class="shortcut-row"><kbd>/</kbd><span>Search</span></div>
+        <div class="shortcut-row"><kbd>T</kbd><span>Go to Today</span></div>
+        <div class="shortcut-row"><kbd>C</kbd><span>Calendar</span></div>
+        <div class="shortcut-row"><kbd>P</kbd><span>Projects</span></div>
+        <div class="shortcut-row"><kbd>I</kbd><span>Inbox</span></div>
+        <div class="shortcut-row"><kbd>Esc</kbd><span>Close panel / modal</span></div>
+        <div class="shortcut-row"><kbd>?</kbd><span>Shortcuts help</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DRAW TEXT PROMPT (shown after drawing a shape) -->
+  <div id="draw-text-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="draw-text-title" aria-hidden="true">
+    <div class="modal-box draw-text-box">
+      <div class="modal-header">
+        <h2 class="modal-title" id="draw-text-title">Add text inside shape?</h2>
+        <button class="icon-btn modal-close" id="draw-text-close" aria-label="Close">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 2l10 10M12 2L2 12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <div class="modal-body draw-text-body">
+        <!-- Preview SVG of the drawn shape -->
+        <div class="draw-preview-wrap" id="draw-text-preview-wrap">
+          <svg id="draw-text-preview-svg" width="80" height="80" viewBox="0 0 80 80"></svg>
+        </div>
+
+        <div class="form-field">
+          <label class="form-label" for="draw-text-input">Center text <span style="opacity:.55;font-weight:400">(optional)</span></label>
+          <input class="form-input" id="draw-text-input" type="text" placeholder="e.g. EX, A, 5, ★ — or leave blank" maxlength="6" autocomplete="off" />
+        </div>
+
+        <div class="form-field">
+          <label class="form-label">Color</label>
+          <div class="draw-color-row" role="radiogroup">
+            <label class="draw-color-opt" title="Red">
+              <input type="radio" name="draw-color" value="#ef4444" checked />
+              <span class="draw-color-dot" style="background:#ef4444"></span>
+            </label>
+            <label class="draw-color-opt" title="Blue">
+              <input type="radio" name="draw-color" value="#3b82f6" />
+              <span class="draw-color-dot" style="background:#3b82f6"></span>
+            </label>
+            <label class="draw-color-opt" title="Green">
+              <input type="radio" name="draw-color" value="#22c55e" />
+              <span class="draw-color-dot" style="background:#22c55e"></span>
+            </label>
+            <label class="draw-color-opt" title="Amber">
+              <input type="radio" name="draw-color" value="#f59e0b" />
+              <span class="draw-color-dot" style="background:#f59e0b"></span>
+            </label>
+            <label class="draw-color-opt" title="Purple">
+              <input type="radio" name="draw-color" value="#a855f7" />
+              <span class="draw-color-dot" style="background:#a855f7"></span>
+            </label>
+            <label class="draw-color-opt" title="Rose">
+              <input type="radio" name="draw-color" value="#f43f5e" />
+              <span class="draw-color-dot" style="background:#f43f5e"></span>
+            </label>
+            <label class="draw-color-opt" title="Black/dark">
+              <input type="radio" name="draw-color" value="#1e293b" />
+              <span class="draw-color-dot" style="background:#1e293b;border:1px solid #475569"></span>
+            </label>
+            <!-- Custom hex picker -->
+            <label class="draw-color-opt draw-color-custom" title="Custom color">
+              <input type="radio" name="draw-color" value="custom" id="draw-color-custom-radio" />
+              <input type="color" id="draw-color-custom-input" value="#3b82f6" title="Pick color" />
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-ghost" id="draw-text-cancel">Cancel</button>
+        <button type="button" class="btn-primary" id="draw-text-confirm">Place shape</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEARCH OVERLAY -->
+  <div id="search-overlay" class="search-overlay" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="search-box">
+      <div class="search-input-wrap">
+        <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><circle cx="6.5" cy="6.5" r="4.5" stroke="currentColor" stroke-width="1.3"/><path d="M10.5 10.5L14 14" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        <input type="text" class="search-input" id="search-input" placeholder="Search tasks..." autocomplete="off" aria-label="Search tasks" />
+        <kbd class="search-esc">Esc</kbd>
+      </div>
+      <ul class="search-results" id="search-results" role="listbox"></ul>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATIONS -->
+  <div id="toast-container" class="toast-container" aria-live="polite" aria-label="Notifications"></div>
+
+  <!-- MOBILE BOTTOM NAV -->
+  <nav id="mobile-nav" class="mobile-nav" aria-label="Mobile navigation">
+    <button class="mobile-nav-item active" data-view="today">
+      <svg width="18" height="18" viewBox="0 0 15 15" fill="none"><rect x="2" y="2" width="11" height="11" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M5 2V1M10 2V1" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M2 5.5h11" stroke="currentColor" stroke-width="1.1"/></svg>
+      <span>Today</span>
+    </button>
+    <button class="mobile-nav-item" data-view="calendar">
+      <svg width="18" height="18" viewBox="0 0 15 15" fill="none"><rect x="1.5" y="2.5" width="12" height="11" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M5 2V1M10 2V1" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M1.5 6h12" stroke="currentColor" stroke-width="1.1"/></svg>
+      <span>Calendar</span>
+    </button>
+    <button class="mobile-nav-item mobile-add-btn" id="mobile-add-btn" aria-label="Add task">
+      <svg width="20" height="20" viewBox="0 0 13 13" fill="none"><path d="M6.5 1v11M1 6.5h11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+    </button>
+    <button class="mobile-nav-item" data-view="projects">
+      <svg width="18" height="18" viewBox="0 0 15 15" fill="none"><rect x="1.5" y="1.5" width="5.5" height="5.5" rx="1" stroke="currentColor" stroke-width="1.2"/><rect x="8" y="1.5" width="5.5" height="5.5" rx="1" stroke="currentColor" stroke-width="1.2"/><rect x="1.5" y="8" width="5.5" height="5.5" rx="1" stroke="currentColor" stroke-width="1.2"/><rect x="8" y="8" width="5.5" height="5.5" rx="1" stroke="currentColor" stroke-width="1.2"/></svg>
+      <span>Projects</span>
+    </button>
+    <button class="mobile-nav-item" data-view="settings">
+      <svg width="18" height="18" viewBox="0 0 15 15" fill="none"><circle cx="7.5" cy="7.5" r="2" stroke="currentColor" stroke-width="1.2"/><path d="M7.5 1.5v1M7.5 12.5v1M1.5 7.5h1M12.5 7.5h1M3.2 3.2l.7.7M11.1 11.1l.7.7M11.1 3.9l-.7.7M3.9 11.1l-.7.7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+      <span>More</span>
+    </button>
+  </nav>
+
+  <!-- JS Modules -->
+  <script src="js/utils.js" charset="utf-8"></script>
+  <script src="js/store.js" charset="utf-8"></script>
+  <script src="js/events.js" charset="utf-8"></script>
+  <script src="js/data.js" charset="utf-8"></script>
+  <script src="js/tasks.js" charset="utf-8"></script>
+  <script src="js/projects.js" charset="utf-8"></script>
+  <script src="js/calendar.js" charset="utf-8"></script>
+  <script src="js/search.js" charset="utf-8"></script>
+  <script src="js/settings.js" charset="utf-8"></script>
+  <script src="js/ui.js" charset="utf-8"></script>
+  <script src="js/app.js" charset="utf-8"></script>
+</body>
+</html>
