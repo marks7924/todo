@@ -161,3 +161,50 @@
 }
 .deadline-badge.ok { color: var(--success); background: rgba(127,165,138,0.1); }
 .deadline-badge.soon { color: var(--accent); background: var(--accent-muted); }
+
+/* Project Detail Multi-Column Grid Layout */
+.project-detail-body .task-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 10px 14px;
+}
+
+.project-detail-body .task-row {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 10px 14px;
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  transition: border-color var(--transition-fast), background var(--transition-fast), box-shadow var(--transition-fast);
+  align-items: flex-start;
+}
+
+.project-detail-body .task-row:hover {
+  border-color: var(--text-muted);
+  background: var(--surface-2);
+  box-shadow: var(--shadow-md);
+}
+
+.project-detail-body .task-row:last-child {
+  border-bottom: 1px solid var(--border);
+}
+
+.project-detail-body .task-check {
+  margin-top: 2px;
+}
+
+.project-detail-body .task-body {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.project-detail-body .task-title {
+  white-space: normal;
+  word-break: break-word;
+  line-height: 1.35;
+}
+
+.project-detail-body .task-meta {
+  margin-top: 2px;
+}
