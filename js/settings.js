@@ -65,11 +65,11 @@ const Settings = (() => {
     codeInput.type = 'text';
     codeInput.readOnly = true;
     codeInput.value = dataCode;
-    codeInput.style.cssText = 'font-family:monospace; font-size:12px; flex:1; min-width:180px; text-overflow:ellipsis;';
+    codeInput.style.cssText = 'font-size: 18px; font-weight: 700; text-align: center; letter-spacing: 4px; max-width: 120px; color: var(--accent); background: var(--surface-2);';
 
     const copyCodeBtn = document.createElement('button');
     copyCodeBtn.className = 'btn-primary';
-    copyCodeBtn.style.padding = '6px 12px';
+    copyCodeBtn.style.padding = '6px 14px';
     copyCodeBtn.style.fontSize = '12px';
     copyCodeBtn.textContent = 'Copy Code';
     copyCodeBtn.addEventListener('click', () => {
@@ -87,15 +87,16 @@ const Settings = (() => {
     codeRow.appendChild(codeWrap);
     syncGroup.appendChild(codeRow);
 
-    const loadRow = makeRow('Load Data from Code', 'Paste a Data Code from another device to load its exact data');
+    const loadRow = makeRow('Load Data from Code', 'Enter a 4-character Data Code to load its exact data');
     const loadWrap = document.createElement('div');
     loadWrap.style.cssText = 'display:flex; gap:8px; align-items:center; flex-wrap:wrap; width:100%; margin-top:8px;';
 
     const loadInput = document.createElement('input');
     loadInput.className = 'form-input';
     loadInput.type = 'text';
-    loadInput.placeholder = 'Paste Data Code (e.g. PLN-...)';
-    loadInput.style.cssText = 'font-family:monospace; font-size:12px; flex:1; min-width:180px;';
+    loadInput.placeholder = 'e.g. 7924';
+    loadInput.maxLength = 10;
+    loadInput.style.cssText = 'font-size: 16px; font-weight: 600; text-align: center; letter-spacing: 2px; max-width: 130px;';
 
     const loadBtn = document.createElement('button');
     loadBtn.className = 'btn-ghost';

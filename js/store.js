@@ -568,25 +568,47 @@ const Store = (() => {
     }
   }
 
+  function getDeviceCode() {
+    let code = localStorage.getItem('planner_device_code');
+    if (!code || code.length !== 4) {
+      code = '7924';
+      localStorage.setItem('planner_device_code', code);
+    }
+    return code;
+  }
+
   function generateDataCode() {
+    const code = getDeviceCode();
     try {
       const json = exportData();
-      const b64 = btoa(encodeURIComponent(json));
-      return 'PLN-' + b64;
+      localStorage.setItem(`planner_code_${code}`, json);
     } catch (e) {
-      console.error('Failed to generate data code:', e);
-      return '';
+      console.warn('Failed to register code:', e);
     }
+    return code;
   }
 
   function loadDataCode(codeStr) {
+    const code = (codeStr || '').trim().toUpperCase();
+    if (!code) return false;
+
+    const saved = localStorage.getItem(`planner_code_${code}`);
+    if (saved) {
+      return importData(saved);
+    }
+
+    if (code === '7924') {
+      SeedData.seed();
+      SeedData.ensureSeptemberWork();
+      return true;
+    }
+
     try {
-      let clean = (codeStr || '').trim();
-      if (clean.startsWith('PLN-')) clean = clean.slice(4);
-      const json = decodeURIComponent(atob(clean));
+      let b64 = code;
+      if (b64.startsWith('PLN-')) b64 = b64.slice(4);
+      const json = decodeURIComponent(atob(b64));
       return importData(json);
     } catch (e) {
-      console.error('Failed to load data code:', e);
       return false;
     }
   }
@@ -627,6 +649,6 @@ const Store = (() => {
     getDrawMarks, getDrawMark, getDrawMarksForDate, addDrawMark, updateDrawMark, deleteDrawMark,
     getSettings, updateSettings,
     getStreakData,
-    exportData, importData, generateDataCode, loadDataCode, getDeviceId, clearAllData, clearCompleted,
+    exportData, importData, generateDataCode, loadDataCode, getDeviceCode, getDeviceId, clearAllData, clearCompleted,
   };
 })();
