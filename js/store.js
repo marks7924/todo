@@ -589,27 +589,44 @@ const Store = (() => {
   }
 
   function loadDataCode(codeStr) {
-    const code = (codeStr || '').trim().toUpperCase();
+    const code = (codeStr || '').trim();
     if (!code) return false;
 
-    const saved = localStorage.getItem(`planner_code_${code}`);
+    // 1. Direct JSON string check
+    if (code.startsWith('{') && code.endsWith('}')) {
+      return importData(code);
+    }
+
+    const upperCode = code.toUpperCase();
+
+    // 2. Check local storage saved code
+    const saved = localStorage.getItem(`planner_code_${upperCode}`);
     if (saved) {
       return importData(saved);
     }
 
-    if (code === '7924') {
+    // 3. Special default 7924 seed code
+    if (upperCode === '7924') {
       SeedData.seed();
       SeedData.ensureSeptemberWork();
       return true;
     }
 
+    // 4. Base64 encoded payload check
     try {
       let b64 = code;
       if (b64.startsWith('PLN-')) b64 = b64.slice(4);
       const json = decodeURIComponent(atob(b64));
       return importData(json);
     } catch (e) {
-      return false;
+      try {
+        let b64 = code;
+        if (b64.startsWith('PLN-')) b64 = b64.slice(4);
+        const json = atob(b64);
+        return importData(json);
+      } catch (err) {
+        return false;
+      }
     }
   }
 

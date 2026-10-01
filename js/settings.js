@@ -82,40 +82,55 @@ const Settings = (() => {
       });
     });
 
+    const copyPayloadBtn = document.createElement('button');
+    copyPayloadBtn.className = 'btn-ghost';
+    copyPayloadBtn.style.padding = '6px 14px';
+    copyPayloadBtn.style.fontSize = '12px';
+    copyPayloadBtn.textContent = 'Copy Data Text';
+    copyPayloadBtn.title = 'Copy all PC data as text to send to phone';
+    copyPayloadBtn.addEventListener('click', () => {
+      const fullJson = Store.exportData();
+      navigator.clipboard.writeText(fullJson).then(() => {
+        UI.toast('All PC Data copied to clipboard as text!');
+      }).catch(() => {
+        UI.toast('Failed to copy. Try Export JSON.');
+      });
+    });
+
     codeWrap.appendChild(codeInput);
     codeWrap.appendChild(copyCodeBtn);
+    codeWrap.appendChild(copyPayloadBtn);
     codeRow.appendChild(codeWrap);
     syncGroup.appendChild(codeRow);
 
-    const loadRow = makeRow('Load Data from Code', 'Enter a 4-character Data Code to load its exact data');
+    const loadRow = makeRow('Load Data from Code or Text', 'Enter 7924 or paste Data Text from PC');
     const loadWrap = document.createElement('div');
     loadWrap.style.cssText = 'display:flex; gap:8px; align-items:center; flex-wrap:wrap; width:100%; margin-top:8px;';
 
     const loadInput = document.createElement('input');
     loadInput.className = 'form-input';
     loadInput.type = 'text';
-    loadInput.placeholder = 'e.g. 7924';
-    loadInput.maxLength = 10;
-    loadInput.style.cssText = 'font-size: 16px; font-weight: 600; text-align: center; letter-spacing: 2px; max-width: 130px;';
+    loadInput.placeholder = 'Paste Code or Data Text here...';
+    loadInput.style.cssText = 'font-size: 14px; font-weight: 500; text-align: left; max-width: 240px;';
 
     const loadBtn = document.createElement('button');
     loadBtn.className = 'btn-ghost';
     loadBtn.style.padding = '6px 12px';
     loadBtn.style.fontSize = '12px';
-    loadBtn.textContent = 'Load Data Code';
+    loadBtn.textContent = 'Load Data';
     loadBtn.addEventListener('click', () => {
       const code = loadInput.value.trim();
       if (!code) {
-        UI.toast('Please paste a valid Data Code.');
+        UI.toast('Please paste a valid Data Code or Data Text.');
         return;
       }
       const ok = Store.loadDataCode(code);
       if (ok) {
-        UI.toast('Data loaded successfully from Code!');
+        UI.toast('Data loaded successfully!');
         App.refresh();
         render();
       } else {
-        UI.toast('Invalid Data Code.');
+        UI.toast('Invalid Data Code or Data Text.');
       }
     });
 
