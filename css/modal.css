@@ -467,6 +467,7 @@
   background: var(--bg);
   color: var(--text-primary);
   font-family: inherit;
+  -webkit-text-security: disc;
 }
 
 .auth-pin-input:focus {

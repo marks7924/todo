@@ -196,10 +196,14 @@ const App = (() => {
     const overlay = document.getElementById('auth-lock-overlay');
     if (!overlay) return;
 
-    const isAuthed = localStorage.getItem('planner_authenticated') === 'true';
-    if (isAuthed) {
+    const unlock = () => {
+      localStorage.setItem('planner_authenticated', 'true');
       overlay.classList.add('unlocked');
-      overlay.style.display = 'none';
+      setTimeout(() => { overlay.style.display = 'none'; }, 200);
+    };
+
+    if (localStorage.getItem('planner_authenticated') === 'true') {
+      unlock();
       return;
     }
 
@@ -211,24 +215,35 @@ const App = (() => {
     const errorEl = document.getElementById('auth-lock-error');
     const card = overlay.querySelector('.auth-lock-card');
 
-    setTimeout(() => input?.focus(), 150);
-
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const val = input.value.trim();
-      if (val === PASSCODE) {
-        localStorage.setItem('planner_authenticated', 'true');
-        overlay.classList.add('unlocked');
-        setTimeout(() => { overlay.style.display = 'none'; }, 300);
+    const tryUnlock = () => {
+      const val = (input.value || '').trim().replace(/[^0-9]/g, '');
+      if (val === PASSCODE || val.includes(PASSCODE)) {
+        unlock();
         UI.toast('Access Granted');
-      } else {
-        errorEl.style.display = 'block';
-        card.classList.add('shake');
-        setTimeout(() => card.classList.remove('shake'), 450);
-        input.value = '';
-        input.focus();
+        return true;
+      }
+      return false;
+    };
+
+    input?.addEventListener('input', () => {
+      if (errorEl) errorEl.style.display = 'none';
+      tryUnlock();
+    });
+
+    form?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (!tryUnlock()) {
+        if (errorEl) errorEl.style.display = 'block';
+        card?.classList.add('shake');
+        setTimeout(() => card?.classList.remove('shake'), 450);
+        if (input) {
+          input.value = '';
+          input.focus();
+        }
       }
     });
+
+    setTimeout(() => input?.focus(), 150);
   }
 
   // -- Init -----------------------------------------------
