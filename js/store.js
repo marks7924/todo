@@ -568,18 +568,35 @@ const Store = (() => {
     }
   }
 
-  function clearAllData() {
-    state.tasks = [];
-    state.projects = [];
-    state.recurrences = [];
-    state.events = [];
-    state.drawMarks = [];
-    save();
+  function generateDataCode() {
+    try {
+      const json = exportData();
+      const b64 = btoa(encodeURIComponent(json));
+      return 'PLN-' + b64;
+    } catch (e) {
+      console.error('Failed to generate data code:', e);
+      return '';
+    }
   }
 
-  function clearCompleted() {
-    state.tasks = state.tasks.filter(t => t.status !== 'completed');
-    save();
+  function loadDataCode(codeStr) {
+    try {
+      let clean = (codeStr || '').trim();
+      if (clean.startsWith('PLN-')) clean = clean.slice(4);
+      const json = decodeURIComponent(atob(clean));
+      return importData(json);
+    } catch (e) {
+      console.error('Failed to load data code:', e);
+      return false;
+    }
+  }
+
+  function getDeviceId() {
+    if (!state.settings.deviceId) {
+      state.settings.deviceId = 'DEV-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+      save();
+    }
+    return state.settings.deviceId;
   }
 
   return {
@@ -596,6 +613,6 @@ const Store = (() => {
     getDrawMarks, getDrawMark, getDrawMarksForDate, addDrawMark, updateDrawMark, deleteDrawMark,
     getSettings, updateSettings,
     getStreakData,
-    exportData, importData, clearAllData, clearCompleted,
+    exportData, importData, generateDataCode, loadDataCode, getDeviceId, clearAllData, clearCompleted,
   };
 })();

@@ -47,6 +47,84 @@ const Settings = (() => {
 
     body.appendChild(appearGroup);
 
+    // -- Device Data Code -------------------------------------
+    const syncGroup = makeGroup('Device Data Code & Sync');
+
+    const devId = Store.getDeviceId();
+    const idRow = makeRow('Device ID', `Unique identifier for this device: ${devId}`);
+    syncGroup.appendChild(idRow);
+
+    const codeRow = makeRow('Your Data Code', 'Share or copy this code to load your exact data on another device');
+    const codeWrap = document.createElement('div');
+    codeWrap.style.cssText = 'display:flex; gap:8px; align-items:center; flex-wrap:wrap; width:100%; margin-top:8px;';
+
+    const dataCode = Store.generateDataCode();
+
+    const codeInput = document.createElement('input');
+    codeInput.className = 'form-input';
+    codeInput.type = 'text';
+    codeInput.readOnly = true;
+    codeInput.value = dataCode;
+    codeInput.style.cssText = 'font-family:monospace; font-size:12px; flex:1; min-width:180px; text-overflow:ellipsis;';
+
+    const copyCodeBtn = document.createElement('button');
+    copyCodeBtn.className = 'btn-primary';
+    copyCodeBtn.style.padding = '6px 12px';
+    copyCodeBtn.style.fontSize = '12px';
+    copyCodeBtn.textContent = 'Copy Code';
+    copyCodeBtn.addEventListener('click', () => {
+      navigator.clipboard.writeText(dataCode).then(() => {
+        UI.toast('Data Code copied to clipboard!');
+      }).catch(() => {
+        codeInput.select();
+        document.execCommand('copy');
+        UI.toast('Data Code copied!');
+      });
+    });
+
+    codeWrap.appendChild(codeInput);
+    codeWrap.appendChild(copyCodeBtn);
+    codeRow.appendChild(codeWrap);
+    syncGroup.appendChild(codeRow);
+
+    const loadRow = makeRow('Load Data from Code', 'Paste a Data Code from another device to load its exact data');
+    const loadWrap = document.createElement('div');
+    loadWrap.style.cssText = 'display:flex; gap:8px; align-items:center; flex-wrap:wrap; width:100%; margin-top:8px;';
+
+    const loadInput = document.createElement('input');
+    loadInput.className = 'form-input';
+    loadInput.type = 'text';
+    loadInput.placeholder = 'Paste Data Code (e.g. PLN-...)';
+    loadInput.style.cssText = 'font-family:monospace; font-size:12px; flex:1; min-width:180px;';
+
+    const loadBtn = document.createElement('button');
+    loadBtn.className = 'btn-ghost';
+    loadBtn.style.padding = '6px 12px';
+    loadBtn.style.fontSize = '12px';
+    loadBtn.textContent = 'Load Data Code';
+    loadBtn.addEventListener('click', () => {
+      const code = loadInput.value.trim();
+      if (!code) {
+        UI.toast('Please paste a valid Data Code.');
+        return;
+      }
+      const ok = Store.loadDataCode(code);
+      if (ok) {
+        UI.toast('Data loaded successfully from Code!');
+        App.refresh();
+        render();
+      } else {
+        UI.toast('Invalid Data Code.');
+      }
+    });
+
+    loadWrap.appendChild(loadInput);
+    loadWrap.appendChild(loadBtn);
+    loadRow.appendChild(loadWrap);
+    syncGroup.appendChild(loadRow);
+
+    body.appendChild(syncGroup);
+
     // -- Data ------------------------------------------------
     const dataGroup = makeGroup('Data');
 
