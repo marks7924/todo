@@ -697,7 +697,20 @@ const DrawMode = (() => {
     // It fires BEFORE the draw-drag listener (registered later on same element)
     // so we can use stopImmediatePropagation() to gate draw-drag when needed.
     const wrap = document.getElementById('cal-grid-wrap');
-    wrap.addEventListener('mousedown', _onMarkDown);
+    if (wrap) {
+      wrap.addEventListener('mousedown', _onMarkDown);
+      wrap.addEventListener('touchstart', _onMarkDown, { passive: false });
+    }
+  }
+
+  function _getPos(e) {
+    if (e.touches && e.touches.length > 0) {
+      return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+    }
+    if (e.changedTouches && e.changedTouches.length > 0) {
+      return { x: e.changedTouches[0].clientX, y: e.changedTouches[0].clientY };
+    }
+    return { x: e.clientX || 0, y: e.clientY || 0 };
   }
 
   // -- Tool management ------------------------------------
@@ -743,46 +756,43 @@ const DrawMode = (() => {
     const wrap = document.getElementById('cal-grid-wrap');
     if (!wrap) return;
     wrap.addEventListener('mousedown', _onDrawDown);
-    document.addEventListener('mousemove', _onDrawMove);
+    wrap.addEventListener('touchstart', _onDrawDown, { passive: false });
+    document.addEventListener('mousemove', _onDrawMove, { passive: false });
+    document.addEventListener('touchmove', _onDrawMove, { passive: false });
     document.addEventListener('mouseup',   _onDrawUp);
+    document.addEventListener('touchend',  _onDrawUp);
   }
 
   function _detachDrawListeners() {
     const wrap = document.getElementById('cal-grid-wrap');
     if (!wrap) return;
     wrap.removeEventListener('mousedown', _onDrawDown);
+    wrap.removeEventListener('touchstart', _onDrawDown);
     document.removeEventListener('mousemove', _onDrawMove);
+    document.removeEventListener('touchmove', _onDrawMove);
     document.removeEventListener('mouseup',   _onDrawUp);
+    document.removeEventListener('touchend',  _onDrawUp);
   }
 
   // -- Mark interaction (permanent delegated handler) -----
-  //
-  // Fires before _onDrawDown on the same element because it was
-  // registered first (in init). Uses stopImmediatePropagation so
-  // _onDrawDown is suppressed when we handle the interaction here.
 
   function _onMarkDown(e) {
     const g = e.target.closest('[data-mark-id]');
-    if (!g) return; // not clicking a drawn mark \u00e2\u2020\u2019 let other handlers proceed
+    if (!g) return;
 
-    // -- Erase mode -------------------------------------
     if (activeTool === 'erase') {
-      e.preventDefault();
-      e.stopImmediatePropagation(); // prevent _onDrawDown
+      if (e.cancelable) e.preventDefault();
+      e.stopImmediatePropagation();
       Store.deleteDrawMark(g.dataset.markId);
       renderDrawMarks();
       UI.toast('Shape removed.');
       return;
     }
 
-    // -- Active drawing tool (circle/x) \u2013 let _onDrawDown handle it -
-    // The user is in draw mode; clicking on an existing shape draws
-    // a new one on top. This is intentional. Do not intercept.
     if (activeTool) return;
 
-    // -- Normal mode \u2013 start move or click-to-edit -------
-    e.preventDefault();       // prevents text selection during drag
-    e.stopImmediatePropagation(); // prevents cell selectDate() click
+    if (e.cancelable) e.preventDefault();
+    e.stopImmediatePropagation();
 
     const markId = g.dataset.markId;
     const mark = Store.getDrawMark(markId);
@@ -791,39 +801,42 @@ const DrawMode = (() => {
     const cell = g.closest('.cal-day, .cal-week-col');
     if (!cell) return;
 
+    const pos = _getPos(e);
     moveState = {
       markId, mark, cell,
       rect:   cell.getBoundingClientRect(),
-      startX: e.clientX,
-      startY: e.clientY,
+      startX: pos.x,
+      startY: pos.y,
       moved:  false,
       newXpct: null,
       newYpct: null,
     };
 
-    // Temporary listeners for the duration of this drag
-    document.addEventListener('mousemove', _onMoveMove);
+    document.addEventListener('mousemove', _onMoveMove, { passive: false });
+    document.addEventListener('touchmove', _onMoveMove, { passive: false });
     document.addEventListener('mouseup',   _onMoveUp);
+    document.addEventListener('touchend',  _onMoveUp);
   }
 
   // -- Move drag handlers ---------------------------------
 
   function _onMoveMove(e) {
     if (!moveState) return;
+    const pos = _getPos(e);
     const { cell, startX, startY, markId, mark } = moveState;
-    const dx = e.clientX - startX;
-    const dy = e.clientY - startY;
-    if (!moveState.moved && (Math.abs(dx) + Math.abs(dy)) < 5) return; // dead zone
+    const dx = pos.x - startX;
+    const dy = pos.y - startY;
+    if (!moveState.moved && (Math.abs(dx) + Math.abs(dy)) < 5) return;
 
     moveState.moved = true;
+    if (e.cancelable) e.preventDefault();
 
     const rect   = cell.getBoundingClientRect();
-    const newXpx = Math.max(0, Math.min(rect.width,  e.clientX - rect.left));
-    const newYpx = Math.max(0, Math.min(rect.height, e.clientY - rect.top));
+    const newXpx = Math.max(0, Math.min(rect.width,  pos.x - rect.left));
+    const newYpx = Math.max(0, Math.min(rect.height, pos.y - rect.top));
     moveState.newXpct = (newXpx / rect.width)  * 100;
     moveState.newYpct = (newYpx / rect.height) * 100;
 
-    // Live visual: translate the SVG group while dragging
     const gEl = cell.querySelector(`[data-mark-id="${markId}"]`);
     if (gEl) {
       const origXpx = (mark.xPct / 100) * rect.width;
@@ -833,23 +846,22 @@ const DrawMode = (() => {
   }
 
   function _onMoveUp(e) {
-    // Always remove temporary listeners
     document.removeEventListener('mousemove', _onMoveMove);
+    document.removeEventListener('touchmove', _onMoveMove);
     document.removeEventListener('mouseup',   _onMoveUp);
+    document.removeEventListener('touchend',  _onMoveUp);
 
     if (!moveState) return;
     const { markId, moved, newXpct, newYpct } = moveState;
     moveState = null;
 
     if (moved && newXpct !== null) {
-      // Persist new position
       Store.updateDrawMark(markId, {
         xPct: +newXpct.toFixed(2),
         yPct: +newYpct.toFixed(2),
       });
       renderDrawMarks();
     } else if (!moved) {
-      // Simple click (no movement) \u00e2\u2020\u2019 open edit modal
       _openEditModal(markId);
     }
   }
@@ -857,26 +869,25 @@ const DrawMode = (() => {
   // -- Draw drag handlers ---------------------------------
 
   function _getCell(e) {
+    if (e.touches && e.touches.length > 0) {
+      const el = document.elementFromPoint(e.touches[0].clientX, e.touches[0].clientY);
+      return el ? el.closest('.cal-day, .cal-week-col') : null;
+    }
     return e.target.closest('.cal-day, .cal-week-col');
   }
 
   function _onDrawDown(e) {
     if (!activeTool || activeTool === 'erase') return;
 
-    // NOTE: if the user clicked on an existing mark, _onMarkDown would have
-    // already called stopImmediatePropagation for erase. For circle/x mode,
-    // _onMarkDown returns early so this handler still fires \u2013 which means you
-    // can draw on top of existing marks. Intentional.
-
     const cell = _getCell(e);
     if (!cell) return;
     const dateStr = cell.dataset.date;
     if (!dateStr) return;
-    e.preventDefault();
+    if (e.cancelable) e.preventDefault();
 
     const rect = cell.getBoundingClientRect();
+    const pos = _getPos(e);
 
-    // Ghost SVG viewBox = real cell pixels \u00e2\u2020\u2019 coordinates are pixel-accurate
     const ghost = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     ghost.classList.add('draw-ghost-svg');
     ghost.setAttribute('viewBox', `0 0 ${rect.width} ${rect.height}`);
@@ -886,8 +897,8 @@ const DrawMode = (() => {
 
     dragState = {
       cell, dateStr, rect,
-      startX: e.clientX - rect.left, // px inside cell = center of new shape
-      startY: e.clientY - rect.top,
+      startX: pos.x - rect.left,
+      startY: pos.y - rect.top,
       ghost,
       curR: 0,
     };
@@ -895,10 +906,11 @@ const DrawMode = (() => {
 
   function _onDrawMove(e) {
     if (!dragState?.ghost) return;
-    e.preventDefault();
+    if (e.cancelable) e.preventDefault();
+    const pos = _getPos(e);
     const { startX, startY, rect, ghost } = dragState;
-    const dx = (e.clientX - rect.left) - startX;
-    const dy = (e.clientY - rect.top)  - startY;
+    const dx = (pos.x - rect.left) - startX;
+    const dy = (pos.y - rect.top)  - startY;
     const r = Math.max(4, Math.min(
       Math.sqrt(dx * dx + dy * dy),
       Math.min(rect.width, rect.height) * 0.48
@@ -913,7 +925,7 @@ const DrawMode = (() => {
     ghost.remove();
     dragState = null;
 
-    if (curR < 4) return; // too tiny, ignore
+    if (curR < 4) return;
 
     const xPct    = (startX / rect.width)                       * 100;
     const yPct    = (startY / rect.height)                      * 100;
