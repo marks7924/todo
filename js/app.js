@@ -188,6 +188,49 @@ const App = (() => {
     });
   }
 
+  // -- Passcode Auth --------------------------------------
+
+  const PASSCODE = '7924';
+
+  function checkAuth() {
+    const overlay = document.getElementById('auth-lock-overlay');
+    if (!overlay) return;
+
+    const isAuthed = localStorage.getItem('planner_authenticated') === 'true';
+    if (isAuthed) {
+      overlay.classList.add('unlocked');
+      overlay.style.display = 'none';
+      return;
+    }
+
+    overlay.style.display = 'flex';
+    overlay.classList.remove('unlocked');
+
+    const form = document.getElementById('auth-lock-form');
+    const input = document.getElementById('auth-pin-input');
+    const errorEl = document.getElementById('auth-lock-error');
+    const card = overlay.querySelector('.auth-lock-card');
+
+    setTimeout(() => input?.focus(), 150);
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const val = input.value.trim();
+      if (val === PASSCODE) {
+        localStorage.setItem('planner_authenticated', 'true');
+        overlay.classList.add('unlocked');
+        setTimeout(() => { overlay.style.display = 'none'; }, 300);
+        UI.toast('Access Granted');
+      } else {
+        errorEl.style.display = 'block';
+        card.classList.add('shake');
+        setTimeout(() => card.classList.remove('shake'), 450);
+        input.value = '';
+        input.focus();
+      }
+    });
+  }
+
   // -- Init -----------------------------------------------
 
   function init() {
@@ -196,6 +239,9 @@ const App = (() => {
 
     // Seed demo data on first launch
     SeedData.initIfNeeded();
+
+    // Check passcode auth
+    checkAuth();
 
     // Init theme
     Settings.initTheme();

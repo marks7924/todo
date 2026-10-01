@@ -834,6 +834,28 @@
   <!-- TOAST NOTIFICATIONS -->
   <div id="toast-container" class="toast-container" aria-live="polite" aria-label="Notifications"></div>
 
+  <!-- AUTH LOCK SCREEN OVERLAY -->
+  <div id="auth-lock-overlay" class="auth-lock-overlay" role="dialog" aria-modal="true" aria-label="Passcode protection">
+    <div class="auth-lock-card">
+      <div class="auth-lock-icon">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
+      </div>
+      <h2 class="auth-lock-title">Enter Passcode</h2>
+      <p class="auth-lock-sub">Enter passcode to access your planner</p>
+      
+      <form id="auth-lock-form" autocomplete="off">
+        <div class="auth-pin-wrap">
+          <input type="password" id="auth-pin-input" class="auth-pin-input" placeholder="••••" maxlength="8" pattern="[0-9]*" inputmode="numeric" required autocomplete="current-password" autofocus />
+        </div>
+        <div id="auth-lock-error" class="auth-lock-error" style="display:none">Incorrect passcode. Try again.</div>
+        <button type="submit" class="btn-primary auth-lock-btn">Unlock Planner</button>
+      </form>
+    </div>
+  </div>
+
   <!-- MOBILE BOTTOM NAV -->
   <nav id="mobile-nav" class="mobile-nav" aria-label="Mobile navigation">
     <button class="mobile-nav-item active" data-view="today">
