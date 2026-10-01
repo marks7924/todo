@@ -599,6 +599,20 @@ const Store = (() => {
     return state.settings.deviceId;
   }
 
+  function clearAllData() {
+    state.tasks = [];
+    state.projects = [];
+    state.recurrences = [];
+    state.events = [];
+    state.drawMarks = [];
+    save();
+  }
+
+  function clearCompleted() {
+    state.tasks = state.tasks.filter(t => t.status !== 'completed');
+    save();
+  }
+
   return {
     load, save, subscribe, getState,
     getTasks, getTask, addTask, updateTask, deleteTask, completeTask, reorderTask,
